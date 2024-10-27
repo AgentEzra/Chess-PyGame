@@ -11,7 +11,7 @@ pip install python-chess pygame
 Go to Stockfish’s official website to download the latest version of Stockfish.
 After downloading, extract the ZIP file.
 
-3.Set Up Stockfish Path in Your Code
+3. Set Up Stockfish Path in Your Code
 Locate stockfish.exe in the extracted folder.
 Open chess_bot.py, and set the path to stockfish.exe in line 77.
 
