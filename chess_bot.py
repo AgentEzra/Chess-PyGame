@@ -6,29 +6,25 @@ import os
 # Initialize pygame
 pygame.init()
 
-# Set up the colors for the chessboard
-LIGHT_BROWN = (222, 184, 135)  # Light brown for light squares
-DARK_BROWN = (139, 69, 19)     # Dark brown for dark squares
-
-# Set up the dimensions of the board
+# Constants
+LIGHT_BROWN = (222, 184, 135)
+DARK_BROWN = (139, 69, 19)
 BOARD_SIZE = 480
 SQUARE_SIZE = BOARD_SIZE // 8
+ENGINE_PATH = "YOUR_STOCKFISH_PATH_HERE"  # STOCKFISH PATH, READ THE README.md
 
 # Load chess pieces images
 def load_piece_images():
     pieces = {}
-    # Load white pieces
-    for piece in ['P', 'N', 'B', 'R', 'Q', 'K']:
-        pieces[piece] = pygame.transform.scale(
-            pygame.image.load(os.path.join("pieces", "white", f"{piece}.png")),
-            (SQUARE_SIZE, SQUARE_SIZE)
-        )
-    # Load black pieces
-    for piece in ['p', 'n', 'b', 'r', 'q', 'k']:
-        pieces[piece] = pygame.transform.scale(
-            pygame.image.load(os.path.join("pieces", "black", f"{piece}.png")),
-            (SQUARE_SIZE, SQUARE_SIZE)
-        )
+    colors = ['white', 'black']
+    symbols = ['P', 'N', 'B', 'R', 'Q', 'K']
+    for color in colors:
+        for symbol in symbols:
+            piece = symbol if color == 'white' else symbol.lower()
+            pieces[piece] = pygame.transform.scale(
+                pygame.image.load(os.path.join("pieces", color, f"{piece}.png")),
+                (SQUARE_SIZE, SQUARE_SIZE)
+            )
     return pieces
 
 # Draw the chess board
@@ -44,78 +40,54 @@ def draw_pieces(screen, board, pieces):
     for square in chess.SQUARES:
         piece = board.piece_at(square)
         if piece:
-            row = 7 - (square // 8)
-            col = square % 8
+            row, col = 7 - square // 8, square % 8
             screen.blit(pieces[piece.symbol()], pygame.Rect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
 
 # Get the square clicked by the player
 def get_square_at(mouse_pos):
     x, y = mouse_pos
-    col = x // SQUARE_SIZE
-    row = 7 - (y // SQUARE_SIZE)
-    return chess.square(col, row)
+    return chess.square(x // SQUARE_SIZE, 7 - (y // SQUARE_SIZE))
 
-# Main loop for the GUI
+# Main game loop
 def main():
     screen = pygame.display.set_mode((BOARD_SIZE, BOARD_SIZE))
     pygame.display.set_caption('Chess Game')
-
-    # Load the piece images
     pieces = load_piece_images()
-
-    # Create a chess board
     board = chess.Board()
 
-    # Ask the player to choose white or black
-    player_color = None
+    player_color = input("Choose your color (w for white, b for black): ").lower()
     while player_color not in ['w', 'b']:
-        player_input = input("Choose your color (w for white, b for black): ").lower()
-        if player_input in ['w', 'b']:
-            player_color = player_input
+        player_color = input("Choose your color (w for white, b for black): ").lower()
 
-    # Set the path to the Stockfish engine executable
-    engine_path = "YOUR_STOCKFISH_PATH_HERE" #Read README.md
-
-    # Start the engine
-    with chess.engine.SimpleEngine.popen_uci(engine_path) as engine:
-        running = True
-        selected_square = None  # To keep track of the first click (selected piece)
-        player_turn = (player_color == 'w')  # White starts the game
+    with chess.engine.SimpleEngine.popen_uci(ENGINE_PATH) as engine:
+        running, player_turn, selected_square = True, player_color == 'w', None
+        update_display = True
 
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-
-                # Player's turn (handle mouse clicks to move pieces)
-                if player_turn and event.type == pygame.MOUSEBUTTONDOWN:
+                elif player_turn and event.type == pygame.MOUSEBUTTONDOWN:
                     clicked_square = get_square_at(event.pos)
                     piece = board.piece_at(clicked_square)
-
-                    if selected_square is None:
-                        # First click: select the piece
-                        if piece and piece.color == (player_color == 'w'):
-                            selected_square = clicked_square
-                    else:
-                        # Second click: attempt to move the piece
+                    if selected_square is None and piece and piece.color == (player_color == 'w'):
+                        selected_square = clicked_square
+                    elif selected_square is not None:
                         move = chess.Move(selected_square, clicked_square)
                         if move in board.legal_moves:
                             board.push(move)
-                            player_turn = False  # Now it's Stockfish's turn
-                        selected_square = None  # Reset the selection
+                            player_turn, selected_square, update_display = False, None, True
 
-            # Draw the chess board and pieces
-            draw_board(screen)
-            draw_pieces(screen, board, pieces)
+            if update_display:
+                draw_board(screen)
+                draw_pieces(screen, board, pieces)
+                pygame.display.flip()
+                update_display = False
 
-            # Stockfish's turn
             if not player_turn and not board.is_game_over():
-                result = engine.play(board, chess.engine.Limit(time=2.0))  # 2 seconds per move
+                result = engine.play(board, chess.engine.Limit(time=2.0))
                 board.push(result.move)
-                player_turn = True  # After Stockfish's move, it's the player's turn again
-
-            # Update the display
-            pygame.display.flip()
+                player_turn, update_display = True, True
 
             pygame.time.wait(100)
 
