@@ -1,12 +1,36 @@
-# Chess-PyGame
+# CHESS_PYGAME.PY
 
-STEP BY STEP
-1. pip install python-chess pygame
-2. Download Stockfish From https://stockfishchess.org/
-3. After Download A Stockfish, Go To File "chess_bot.py" , Setting The Stockfish Path At Line 77 To Wherever You Save It
-   For Example : C:/Users/Agent Ezra/OneDrive/Pict/Docs/Ezra Chess/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows- 
-                 x86-64-avx2.exe
+# STEP BY STEP
 
-REMINDER
-1. Make Sure You Already Install Python In Your PC/LAPTOP :D
-2. After Download The Stockfish You Will Get It In A Form Of ZIP, I just Want To Tell You To Do Not Extract The Zip
+1. Install Dependencies
+Open a terminal and install the required libraries by running:
+
+pip install python-chess pygame
+
+2. Download Stockfish
+Go to Stockfish’s official website to download the latest version of Stockfish.
+After downloading, extract the ZIP file.
+
+3.Set Up Stockfish Path in Your Code
+Locate stockfish.exe in the extracted folder.
+Open chess_bot.py, and set the path to stockfish.exe in line 77.
+
+Example: If stockfish.exe is in C:/Users/Agent Ezra/OneDrive/Pict/Docs/Ezra Chess/stockfish-windows-x86-64-avx2/stockfish/, set the path as follows:
+
+Chess_Bot.py Line 77
+engine_path = "C:/Users/Agent Ezra/OneDrive/Pict/Docs/Ezra Chess/stockfish-windows-x86-64-avx2/stockfish/stockfish.exe"
+
+
+# REMINDERS
+
+* Python Installation
+Ensure Python is installed on your PC/Laptop. If not, download and install it from python.org.
+
+* Path Formatting
+When copying the path to stockfish.exe, change any \ to / in the path to avoid errors. For example:
+
+C:\path\to\stockfish.exe    -->    C:/path/to/stockfish.exe
+
+* Picking Color at Start
+When running the program, it prompts you to choose a color (w for white, b for black). If you see only a black screen, ensure you select a color in the terminal before continuing.
+
