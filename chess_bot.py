@@ -74,7 +74,7 @@ def main():
             player_color = player_input
 
     # Set the path to the Stockfish engine executable
-    engine_path = "C:/Users/Elisya Putri/OneDrive/Pictures/Documents/Ezra Project/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
+    engine_path = "C:/Users/Agent Ezra/OneDrive/Pict/Docs/Ezra Chess/stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
 
     # Start the engine
     with chess.engine.SimpleEngine.popen_uci(engine_path) as engine:
