@@ -13,7 +13,7 @@ After downloading, extract the ZIP file.
 
 3. Set Up Stockfish Path in Your Code
 Locate stockfish.exe in the extracted folder.
-Open chess_bot.py, and set the path to stockfish.exe in line 77.
+Open chess_bot.py, and set the path to stockfish.exe in line 16.
 
 Example: If stockfish.exe is in C:/Users/Agent Ezra/OneDrive/Pict/Docs/Ezra Chess/stockfish-windows-x86-64-avx2/stockfish/, set the path as follows:
 
